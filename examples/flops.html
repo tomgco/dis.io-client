@@ -1,0 +1,14 @@
+<button onclick="start()">Start worker</button>
+<output id="result"></output>
+
+<script>
+  function start() {
+    worker.postMessage({'cmd': 'start'});
+  }
+
+  var worker = new Worker('flops.js');
+
+  worker.addEventListener('message', function(e) {
+    document.getElementById('result').textContent = e.data;
+  }, false);
+</script>
