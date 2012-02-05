@@ -2,8 +2,12 @@
  * Calculate Series
  */
 
-var digitsGenerated = 0;
-var piHex = '';
+var digitsGenerated = 0
+  , piHex = ''
+  , start = Date.now()
+  , end
+  ;
+
 function S (j, d) {
   var sumLeft = 0;
   /*
@@ -37,13 +41,9 @@ function S (j, d) {
 
 function generateDigit(d) {
   var Sx = 4 * S(1, d);
-  console.log("." + Sx);
   Sx -= 2 * S(4, d);
-  console.log("." + Sx);
   Sx -= S(5, d);
-  console.log("." + Sx);
   Sx -= S(6, d);
-  console.log("." + Sx);
 
   if (Sx > 0)
     Sx -= parseInt(Sx, 10);
@@ -76,8 +76,10 @@ function modPow(B, E, M) {
   return result % M;
 }
 
-// for (var i = 0; i < 1; i++) {
-  generateDigit(1337);
-// }
+for (var i = 0; i < 10000; i++) {
+  generateDigit(i);
+}
 
-console.log('3.' + piHex);
+end = Date.now() - start;
+// console.log('3.' + piHex);
+console.log(end.toString() + 'ms');
