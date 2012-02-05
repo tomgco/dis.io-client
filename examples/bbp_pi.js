@@ -7,11 +7,10 @@ var digitsGenerated = 0
 
 function series(j, d) {
   var s = 0 // sum left
-    , k // for teh loops
     , t = 0 // sum right
     ;
 
-  for (k = 0; k <= d; k++) {
+  for (var k = 0; k <= d; k++) {
     var r = 8 * k + j;
     s += modPow(16, d - k, r) / r;
     s = s % 1.0;
