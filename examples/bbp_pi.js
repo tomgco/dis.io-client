@@ -1,10 +1,4 @@
-// ported from sympy - ntheory/bbp_pi.py
-var digitsGenerated = 0
-  , piHex = ''
-  , start = Date.now()
-  , end
-  ;
-
+var that = this;
 function series(j, d) {
   var s = 0 // sum left
     , t = 0 // sum right
@@ -28,39 +22,46 @@ function series(j, d) {
   return s + t;
 }
 
-function piHexDigits(n, step0, step1, step2, step3) {
+function piHexDigits(n, step) {
   // main of implementation arrays holding formulae coefficients
-  // move out?
 
   var a = [4,2,1,1]
     , j = [1,4,5,6]
     , x
     , hex
-    , step =
-      [ step0
-      , step1
-      , step2
-      , step3
-      ]
     , p = 0
     ;
 
-  step[p] = step[p] || a[p] * series(j[p++], n);
+  // Put these into a new thread.
+
+  step[0] = step[0] || a[0] * series(j[0], n);
 
   // send progress message
-  sendMessage(n, step);
+  that.postMessage(
+    { n: n
+    , step:step
+    }
+  );
 
-  step[p] = step[p] || a[p] * series(j[p++], n);
+  step[1] = step[1] || a[1] * series(j[1], n);
 
   // send progress message
-  sendMessage(n, step);
+  that.postMessage(
+    { n: n
+    , step:step
+    }
+  );
 
-  step[p] = step[p] || a[p] * series(j[p++], n);
+  step[2] = step[2] || a[2] * series(j[2], n);
 
   // send progress message
-  sendMessage(n, step);
+  that.postMessage(
+    { n: n
+    , step:step
+    }
+  );
 
-  step[p] = step[p] || a[p] * series(j[p++], n);
+  step[3] = step[3] || a[3] * series(j[3], n);
 
   x =  step[0];
   x -= step[1];
@@ -79,39 +80,34 @@ function piHexDigits(n, step0, step1, step2, step3) {
 
   hex = x.toString(16);
 
-  while (hex.length < 14) {
-    hex = '0' + hex;
-  }
-
-  complete(n, hex);
-}
-
-function complete(digit, hex) {
-  piHex += hex.substr(0, 1);
-  digitsGenerated++;
+  // for (;hex.length < 14;) {
+  //   hex = '0' + hex;
+  // }
+  hex = new Array(15 - hex.length).join('0') + hex;
+  that.postMessage(
+    { n: n
+    , step: step
+    , hex: hex
+    }
+  );
 }
 
 // base, exponent, modulus
-var modPow = function(B, E, M) {
+var modPow = function(b, e, m) {
   var result = 1;
-  while (E > 0) {
-    if ((E & 1) === 1) {
-      result = (result * B) % M;
+  while (e > 0) {
+    if ((e & 1) === 1) {
+      result = (result * b) % m;
     }
-    E >>= 1;
-    B = (B * B) % M;
+    e >>= 1;
+    b = (b * b) % m;
   }
-  return result % M;
+  return result % m;
 };
 
-var sendMessage = function(n, step) {
-  console.log(step);
-};
-
-// for (var i = 0; i < ; i++) {
-  piHexDigits(1000000);
-// }
-
-end = Date.now() - start;
-// console.log('3.' + piHex);
-console.log(end.toString() + 'ms');
+that.addEventListener('message', function(e) {
+  piHexDigits(
+      e.data.n
+    , e.data.step
+  );
+}, false);
