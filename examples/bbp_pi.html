@@ -1,0 +1,21 @@
+<button onclick="start()">Start worker</button>
+<output id="result"></output>
+
+<script>
+var n = 0;
+  function start() {
+    worker.postMessage({'n': n, "step": []});
+  }
+
+  var worker = new Worker('bbp_pi.js');
+
+  worker.addEventListener('message', function(e) {
+    if (e.data.hex !== undefined) {
+      start(++n);
+    }
+  }, false);
+
+  setInterval(function() {
+    console.log(n);
+  }, 3000)
+</script>

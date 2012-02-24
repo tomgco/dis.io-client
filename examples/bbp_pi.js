@@ -25,8 +25,8 @@ function series(j, d) {
 function piHexDigits(n, step) {
   // main of implementation arrays holding formulae coefficients
 
-  var a = [4,2,1,1]
-    , j = [1,4,5,6]
+  var a = [4, 2, 1, 1]
+    , j = [1, 4, 5, 6]
     , x
     , hex
     , p = 0
@@ -37,8 +37,8 @@ function piHexDigits(n, step) {
   step[0] = step[0] || a[0] * series(j[0], n);
 
   // send progress message
-  that.postMessage(
-    { n: n
+  that.postMessage({
+      n: n
     , step:step
     }
   );
@@ -46,8 +46,8 @@ function piHexDigits(n, step) {
   step[1] = step[1] || a[1] * series(j[1], n);
 
   // send progress message
-  that.postMessage(
-    { n: n
+  that.postMessage({
+      n: n
     , step:step
     }
   );
@@ -55,8 +55,8 @@ function piHexDigits(n, step) {
   step[2] = step[2] || a[2] * series(j[2], n);
 
   // send progress message
-  that.postMessage(
-    { n: n
+  that.postMessage({
+      n: n
     , step:step
     }
   );
@@ -84,8 +84,8 @@ function piHexDigits(n, step) {
   //   hex = '0' + hex;
   // }
   hex = new Array(15 - hex.length).join('0') + hex;
-  that.postMessage(
-    { n: n
+  that.postMessage({
+      n: n
     , step: step
     , hex: hex
     }
