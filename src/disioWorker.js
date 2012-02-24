@@ -25,14 +25,17 @@ $(function() {
       case 'message':
         break;
       case 'saveState':
-          State.setState(data.state);
+          State.setState(data.workUnitID, data.state);
         break;
       case 'completion':
           $.post('http://proxy.tomg.co', data, function(res) {
             if (res.statusCode === 200) {
               State.clearState();
             } else {
-              // start again!
+              worker.postMessage({
+                  'cmd' : 'start'
+                , 'state': false
+              });
             }
           });
         break;
@@ -43,29 +46,26 @@ $(function() {
     console.log('ERROR: Line ' + e.lineno + ' in ' + e.filename + ': ' + e.message);
   }
 
-  // create worker from remote source, this could be very ugly...
-  function createWorker(workUnit) {
-    var bb = new BlobBuilder()
+  function getWorkUnit(cb) {
+    // create worker from remote source, this could be very ugly...
+    $.get('http://proxy.tomg.co', function(workUnit) {
+      var bb = new BlobBuilder()
       ;
 
-    bb.append(data);
-    // Note: window.webkitURL.createObjectURL() in Chrome 10+.
-    worker = new Worker(window.URL.createObjectURL(bb.getBlob()));
+      bb.append(workUnit.data);
+      // Note: window.webkitURL.createObjectURL() in Chrome 10+.
+      worker = new Worker(window.URL.createObjectURL(bb.getBlob()));
 
-    worker.addEventListener('message', workerOnMessage, false);
-    worker.addEventListener('error', workerOnError, false);
-
-    // Start worker without
+      worker.addEventListener('message', workerOnMessage, false);
+      worker.addEventListener('error', workerOnError, false);
+      cb(workUnit.id);
+    });
   }
 
-  function getWorkUnit() {
-    $.get('http://proxy.tomg.co', createWorker);
-  }
-
-  getWorkUnit();
-
-  worker.postMessage({
-      'cmd' : 'start'
-    , 'state': State.getSerialised()
+  getWorkUnit(function(workUnitID) {
+    worker.postMessage({
+        'cmd' : 'start'
+      , 'state': State.getState(workUnitID)
+    });
   });
 });
