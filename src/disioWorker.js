@@ -28,6 +28,7 @@ $(function() {
           State.setState(data.workUnitID, data.state);
         break;
       case 'completion':
+          // change to WebSockets ;]
           $.post('http://proxy.tomg.co', data, function(res) {
             if (res.statusCode === 200) {
               State.clearState();
@@ -62,10 +63,11 @@ $(function() {
     });
   }
 
-  getWorkUnit(function(workUnitID) {
+  getWorkUnit(function(workUnitId) {
     worker.postMessage({
         'cmd' : 'start'
-      , 'state': State.getState(workUnitID)
+      , 'workUnitId': workUnitId
+      , 'state': State.getState(workUnitId)
     });
   });
 });
