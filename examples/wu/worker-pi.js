@@ -107,12 +107,14 @@ var modPow = function(b, e, m) {
   return result % m;
 };
 
-worker.onStart = function() {
+// Required
+worker.onStart = function(data) {
   piHexDigits(
-      e.data.n
-    , e.data.step
+      data.n
+    , data.step
   );
 };
 
-worker.onMessage = function() {
+// optional
+worker.onMessage = function(data) {
 };
