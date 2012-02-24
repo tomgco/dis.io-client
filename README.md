@@ -13,5 +13,6 @@ This is a general playpen for various work units and the final client component 
 ----
     {
         cmd: String // `start` || `stop` - The command to send to the worker
+      , 'workUnitId': workUnitId // the workUnits id
       , state: State // A State Object
     }
