@@ -3,21 +3,69 @@
  * @author Tom Gallacher
  */
 
+ //Stop JS lint whining about jquery && BlobBuilder
+var $
+  , BlobBuilder
+  ;
+
 // imports the communication wrapper to work with webworkers and nodes cluster || child proccess fork
-importScripts('disio-client-communication.js');
-//importScripts('workunit.js'); // data URI for the main work unit
+// importScripts('disio-client-communication.js');
+// importScripts('workunit.js'); // data URI for the main work unit
 
 //time for some psuedo code
-var State = exports.createState()
-  , WorkUnit = exports.createWorkUnit();
+$(function() {
+  var State = exports.createState()
+    , worker
+    ;
 
-WorkUnit.start(function(err) {
-  // on completion.
-  if (err) {
-    // Handle error
-    console.log(err);
-  } else if (!err) {
-    localStorage.clear();
-    // request new work unit
+  function workerOnMessage(e) {
+    var data = JSON.parse(e.data)
+      ;
+    switch(data.type) {
+      case 'message':
+        break;
+      case 'saveState':
+          State.setState(data.state);
+        break;
+      case 'completion':
+          $.post('http://proxy.tomg.co', data, function(res) {
+            if (res.statusCode === 200) {
+              State.clearState();
+            } else {
+              // start again!
+            }
+          });
+        break;
+    }
   }
+
+  function workerOnError(e) {
+    console.log('ERROR: Line ' + e.lineno + ' in ' + e.filename + ': ' + e.message);
+  }
+
+  // create worker from remote source, this could be very ugly...
+  function createWorker(workUnit) {
+    var bb = new BlobBuilder()
+      ;
+
+    bb.append(data);
+    // Note: window.webkitURL.createObjectURL() in Chrome 10+.
+    worker = new Worker(window.URL.createObjectURL(bb.getBlob()));
+
+    worker.addEventListener('message', workerOnMessage, false);
+    worker.addEventListener('error', workerOnError, false);
+
+    // Start worker without
+  }
+
+  function getWorkUnit() {
+    $.get('http://proxy.tomg.co', createWorker);
+  }
+
+  getWorkUnit();
+
+  worker.postMessage({
+      'cmd' : 'start'
+    , 'state': State.getSerialised()
+  });
 });
