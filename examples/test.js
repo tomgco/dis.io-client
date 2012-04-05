@@ -76,10 +76,10 @@ function modPow(B, E, M) {
   return result % M;
 }
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < 100; i++) {
   generateDigit(i);
 }
 
 end = Date.now() - start;
-// console.log('3.' + piHex);
+console.log('3.' + piHex);
 console.log(end.toString() + 'ms');
