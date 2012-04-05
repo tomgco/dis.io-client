@@ -110,8 +110,8 @@ var modPow = function(b, e, m) {
 // Required
 worker.onStart = function(data) {
   piHexDigits(
-      data.n
-    , data.step
+      data.payload.n
+    , data.payload.step
   );
 };
 
