@@ -31,16 +31,15 @@ function startProcess(uri) {
     switch (message.action) {
       // gets the workunit - the js to run a task
       case 'workunit':
-        createWorkUnit(message);
-        socket.json.send({'action': 'getPayload'});
-        workunitId = message.workunitId;
+        createWorkUnit(message, function() {
+          socket.json.send({'action': 'getPayload'});
+          workunitId = message.workunitId;
+        });
         break;
       // gets the payload, this hold parameters
       case 'payload':
         message.workunitId = workunitId;
-        setTimeout(function() {
-          startWorkUnit(message);
-        }, 1500);
+        startWorkUnit(message);
         break;
       case 'message':
         console.log(message);
@@ -63,7 +62,11 @@ function startProcess(uri) {
         console.log(data);
         break;
       case 'saveState':
-        state.setState(data.workUnitID, data.state);
+        data.workunitId = workunitId;
+        socket.json.send(data);
+        // console.log(data);
+        // state.setState(data.id, data.state);
+        // console.log(state.getState(data.id));
         break;
       case 'completed':
         data.workunitId = workunitId;
@@ -80,18 +83,23 @@ function startProcess(uri) {
     console.log(e.stack);
   }
 
-  function createWorkUnit(workUnit) {
+  function createWorkUnit(workUnit, cb) {
     // create worker from remote source, this could be very ugly...
     // use socket.io
     // var bb = new BlobBuilder()
     var bb = new WebKitBlobBuilder()
-    ;
-    bb.append(workUnit.data);
-    // Note: window.webkitURL.createObjectURL() in Chrome 10+.
-    // worker = new Worker(window.URL.createObjectURL(bb.getBlob()));
-    worker = new Worker(window.webkitURL.createObjectURL(bb.getBlob()));
-    worker.addEventListener('message', workerOnMessage, false);
-    worker.addEventListener('error', workerOnError, false);
+      ;
+
+    $.get('/lib/communication.js', function(data) {
+      bb.append(data);
+      bb.append(workUnit.data);
+      // Note: window.webkitURL.createObjectURL() in Chrome 10+.
+      // worker = new Worker(window.URL.createObjectURL(bb.getBlob()));
+      worker = new Worker(window.webkitURL.createObjectURL(bb.getBlob()));
+      worker.addEventListener('message', workerOnMessage, false);
+      worker.addEventListener('error', workerOnError, false);
+      cb();
+    });
   }
 
   function startWorkUnit(payload) {
