@@ -1,3 +1,12 @@
+var stats = {
+        numCompleted: 0
+      , progress: {}
+    };
+
+setInterval(function() {
+  $('body').text(JSON.stringify(stats));
+}, 1800);
+
 /**
  * This is a browser implementation of the processor for the client
  * @author Tom Gallacher
@@ -71,6 +80,9 @@ function startProcess(uri) {
       case 'completed':
         data.workunitId = workunitId;
         socket.json.send(data);
+
+        stats.progress = data;
+        stats.numCompleted++;
         // state.clearState();
         break;
     }
