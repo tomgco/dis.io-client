@@ -52,7 +52,7 @@ function generateDigit(d) {
     Sx += (1 + parseInt(-Sx, 10));
   Sx *= Math.pow(16, 14);
   var hex = Sx.toString(16);
-    
+
   while (hex.length < 14)
     hex = "0" + hex;
 
@@ -76,10 +76,14 @@ function modPow(B, E, M) {
   return result % M;
 }
 
-for (var i = 0; i < 100; i++) {
+for (var i = 0; i < 150000; i++) {
   generateDigit(i);
 }
 
 end = Date.now() - start;
-console.log('3.' + piHex);
+// console.log('3.' + piHex);
 console.log(end.toString() + 'ms');
+console.log('Uptime: ' + process.uptime());
+console.log('Memory Usage');
+console.log(process.memoryUsage());
+
