@@ -122,7 +122,19 @@ function startProcess(uri) {
      * should be used:
      * var bb = new BlobBuilder()
      */
-    var bb = new WebKitBlobBuilder()
+    var webkit = false
+      , firefox = false
+      ;
+
+    if (typeof WebKitBlobBuilder !== 'undefined') {
+      webkit = true;
+      BlobBuilder = WebKitBlobBuilder;
+    } else if (typeof MozBlobBuilder !== 'undefined') {
+      firefox = true;
+      BlobBuilder = MozBlobBuilder;
+    }
+
+    var bb = new BlobBuilder()
       ;
 
     // retrieve communication library.
@@ -131,7 +143,8 @@ function startProcess(uri) {
       bb.append(workUnit.data);
       // Note: window.webkitURL.createObjectURL() in Chrome 10+.
       // worker = new Worker(window.URL.createObjectURL(bb.getBlob()));
-      worker = new Worker(window.webkitURL.createObjectURL(bb.getBlob()));
+      if (webkit) worker = new Worker(window.webkitURL.createObjectURL(bb.getBlob()));
+      else if (firefox) worker = new Worker(window.URL.createObjectURL(bb.getBlob()));
       worker.addEventListener('message', workerOnMessage, false);
       worker.addEventListener('error', workerOnError, false);
       cb();
@@ -146,7 +159,6 @@ function startProcess(uri) {
         'cmd' : 'start'
       , 'payload': payload.data.payload
       , 'id': payload.data.id
-      , 'state': state.getState()
     });
   }
 }
