@@ -143,8 +143,11 @@ function startProcess(uri) {
       bb.append(workUnit.data);
       // Note: window.webkitURL.createObjectURL() in Chrome 10+.
       // worker = new Worker(window.URL.createObjectURL(bb.getBlob()));
-      if (webkit) worker = new Worker(window.webkitURL.createObjectURL(bb.getBlob()));
-      else if (firefox) worker = new Worker(window.URL.createObjectURL(bb.getBlob()));
+      if (webkit) {
+        worker = new Worker(window.webkitURL.createObjectURL(bb.getBlob()));
+      } else if (firefox) {
+        worker = new Worker(window.URL.createObjectURL(bb.getBlob()));
+      }
       worker.addEventListener('message', workerOnMessage, false);
       worker.addEventListener('error', workerOnError, false);
       cb();
