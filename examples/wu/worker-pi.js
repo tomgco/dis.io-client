@@ -1,3 +1,9 @@
+/**
+ * This is a modified version of test.js and is currently conforming with the latest
+ * version of the artifact.
+ * Currently it saves a state asynchronously at 25%, 50% and 75% and then ends the work unit
+ * when completed.
+ */
 function series(j, d) {
   var s = 0 // sum left
     , t = 0 // sum right
@@ -105,7 +111,10 @@ var modPow = function(b, e, m) {
   return result % m;
 };
 
-// Required
+/**
+ * @Required
+ * called when a work unit is called, this is part of the Web Worker API
+ */
 worker.onStart = function(data) {
   piHexDigits(
       data.payload.n
@@ -113,6 +122,11 @@ worker.onStart = function(data) {
   );
 };
 
-// optional
+/**
+ *  @optional
+ * This is called when a worker receives a message.
+ * Currently not implemented in processor.js, however can be used in the future for
+ * notifying clients that a distributor is about to shutdown.
+ */
 worker.onMessage = function(data) {
 };

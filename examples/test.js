@@ -1,5 +1,8 @@
+var fs = require('fs');
 /*
  * Calculate Series
+ * Used to test how fast a single core can calculate the first 150,000 digits of Pi
+ * in base 16.
  */
 
 var digitsGenerated = 0
@@ -76,14 +79,21 @@ function modPow(B, E, M) {
   return result % M;
 }
 
-for (var i = 0; i < 150000; i++) {
-  generateDigit(i);
-}
+var stream = fs.createWriteStream(__dirname + '/results.csv');
 
-end = Date.now() - start;
-// console.log('3.' + piHex);
-console.log(end.toString() + 'ms');
-console.log('Uptime: ' + process.uptime());
-console.log('Memory Usage');
-console.log(process.memoryUsage());
+stream.on('open', function() {
+  var row = '';
+  for (var i = 0; i < 150000; i++) {
+    var start1 = +Date.now();
+    generateDigit(i);
+    row += i + ',' + (Date.now() - start1) + '\n';
+  }
+  stream.write(row);
+  end = Date.now() - start;
+  // console.log('3.' + piHex);
+  console.log(end.toString() + 'ms');
+  console.log('Uptime: ' + process.uptime());
+  console.log('Memory Usage');
+  console.log(process.memoryUsage());
+});
 

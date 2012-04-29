@@ -1,3 +1,8 @@
+/**
+ *  A simple helper function to convert a base 16 number to binary,
+ *  this is useful in testing that the Calculate π work unit is working correctly.
+ *
+ */
 function hex2dec(hex) {
   var iz = "";
   var v = "";
@@ -14,15 +19,15 @@ function hex2dec(hex) {
   var j =  sNumber.length;
   var π;
   for (var k=0; k < j; k++) {
-  iz = sNumber.charAt(k);
-  pos = lst.indexOf(iz);
-  nUpower = k+1;
-  nSprod = Math.pow(pw3, -nUpower);
-  m=pos*nSprod;
-  g = g+m;
-  v = "" + g;
-  var vj =  v.length;
-  π = v.substring(1, vj);
+    iz = sNumber.charAt(k);
+    pos = lst.indexOf(iz);
+    nUpower = k+1;
+    nSprod = Math.pow(pw3, -nUpower);
+    m=pos*nSprod;
+    g = g+m;
+    v = "" + g;
+    var vj =  v.length;
+    π = v.substring(1, vj);
   }
   return π;
 }

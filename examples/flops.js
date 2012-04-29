@@ -1,3 +1,6 @@
+/**
+ * Part of the feasibility study to see how Web Workers work.
+ */
 addEventListener('message', function(e) {
   var data = e.data;
   if(data.cmd === 'start') {
